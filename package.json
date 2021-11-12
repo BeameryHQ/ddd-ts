@@ -1,0 +1,25 @@
+{
+  "name": "ddd-ts",
+  "description": "Building blocks for enabling Domain Driven Design",
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": "Beamery Engineering <>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "fast-equals": "^2.0.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "@types/uuid": "^8.3.1",
+    "jest": "^27.3.1",
+    "jest-extended": "^1.1.0",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  }
+}

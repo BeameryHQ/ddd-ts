@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "incremental": false,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "target": "ES2020",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "allowJs": false,
+    "types": ["jest", "node"],
+    "removeComments": true
+  }
+}
