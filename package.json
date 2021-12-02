@@ -9,6 +9,7 @@
   "scripts": {
     "build": "rollup --config rollup.config.js",
     "test": "jest",
+    "check-types": "tsc --noEmit",
     "lint": "eslint --config .eslintrc.js --ignore-path .gitignore"
   },
   "files": [
