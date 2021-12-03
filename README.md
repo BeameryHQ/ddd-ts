@@ -17,6 +17,7 @@ A collection of small building blocks to help build multi-tenanted applications 
     - [Aggregate Root](#aggregate-root-1)
     - [Domain Events](#domain-events)
     - [Domain Events Broker](#domain-events-broker-1)
+- [Development](#development)
 - [Credits](#credits)
 - [License](#license)
 
@@ -321,6 +322,10 @@ TODO
 #### Domain Events Broker
 
 More examples of how the Domain Events Broker can be used, and some of its features (e.g. queue draining, etc), see the [Events Broker tests](./src/domain-events-broker.test.ts).
+
+## Development
+
+See [Contributing](./CONTRIBUTING.md).
 
 ## Credits
 
