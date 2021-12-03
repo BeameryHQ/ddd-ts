@@ -10,7 +10,9 @@
     "build": "rollup --config rollup.config.js",
     "test": "jest",
     "check-types": "tsc --noEmit",
-    "lint": "eslint --config .eslintrc.js --ignore-path .gitignore"
+    "lint": "eslint --config .eslintrc.js --ignore-path .gitignore",
+    "release": "np",
+    "prepack": "yarn build"
   },
   "files": [
     "dist"
@@ -20,6 +22,9 @@
     "domain driven design",
     "ddd"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "dependencies": {
     "fast-equals": "^2.0.3",
     "uuid": "^8.3.2"
@@ -42,6 +47,7 @@
     "eslint-plugin-tsdoc": "^0.2.14",
     "jest": "^27.3.1",
     "jest-extended": "^1.1.0",
+    "np": "^7.6.0",
     "prettier": "^2.5.0",
     "rollup": "^2.60.2",
     "ts-jest": "^27.0.7",
