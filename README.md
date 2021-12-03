@@ -2,6 +2,8 @@
 
 Build (multi-tenanted) apps with [Domain Driven Design (DDD)][fowler-ddd] and Typescript with ease.
 
+> ⚠️ Although this package is being used in production inside Beamery, the API should still be considered a WIP / Alpha level and likely to include breaking changes. We will signal once the API has stabilised with a v1.0.0 release.
+
 ---
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square&logo=Github)](http://makeapullrequest.com)
