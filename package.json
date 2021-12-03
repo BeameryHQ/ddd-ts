@@ -1,10 +1,10 @@
 {
   "name": "ddd-ts",
-  "description": "Building blocks for powering Domain Driven Design with TS",
+  "description": "Build (multi-tenanted) apps with DDD and Typescript with ease",
   "version": "0.0.0",
   "main": "dist/index.js",
   "module": "dist/index.d.ts",
-  "author": "Beamery Engineering <engineering@beamery.com>",
+  "author": "Beamery Engineering",
   "license": "MIT",
   "scripts": {
     "build": "rollup --config rollup.config.js",
