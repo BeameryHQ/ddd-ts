@@ -7,6 +7,19 @@ on:
       - main
 
 jobs:
+  commitlint:
+    name: Commitlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # required to get all history, not just commit that triggers current run
+          fetch-depth: 0
+
+      - uses: wagoid/commitlint-github-action@v2
+        with:
+          configFile: commitlint.config.js
+
   ci:
     runs-on: ubuntu-latest
     steps:
