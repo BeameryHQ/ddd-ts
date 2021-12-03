@@ -26,13 +26,13 @@ export abstract class Entity<
 > implements IEntity
 {
   private readonly _id: string;
-  private readonly _tenantId: string | null;
+  private readonly _tenantId: string;
 
   protected readonly _data: Omit<T, 'id' | 'tenantId'>;
 
   // Make `id` optional accounting for re-consituting objects from persistence
   constructor(data?: T) {
-    this._tenantId = data?.tenantId ?? null;
+    this._tenantId = data?.tenantId ?? '';
     this._id = data?.id ?? uuid();
 
     // remove captured fields, if they exist

@@ -4,7 +4,7 @@ export interface IDomainEvent<T = null> {
   // id for the Aggregate Root that this event belongs to
   aggregateId: string;
   // support multi-tenant applications
-  tenantId: string | null;
+  tenantId: string;
   // Optional Event data
   data: T | null;
 }
@@ -29,7 +29,7 @@ export abstract class AbstractDomainEvent<T = null> implements IDomainEvent<T> {
   constructor(ctx: IEventConstructorContext, data?: T) {
     this.aggregateId = ctx.aggregateId;
     this.timestamp = new Date().toISOString();
-    this.tenantId = ctx.tenantId ?? null;
+    this.tenantId = ctx.tenantId ?? '';
     this.data = data ?? null;
   }
 }
