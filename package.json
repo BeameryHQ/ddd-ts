@@ -22,6 +22,7 @@
     "domain driven design",
     "ddd"
   ],
+  "repository": "https://github.com/BeameryHQ/ddd-ts",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
