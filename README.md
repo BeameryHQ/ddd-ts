@@ -1,6 +1,16 @@
 # DDD-TS
 
-A collection of small building blocks to help build multi-tenanted applications using [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) with Typescript.
+Build (multi-tenanted) apps with [Domain Driven Design (DDD)][fowler-ddd] and Typescript with ease.
+
+---
+
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square&logo=Github)](http://makeapullrequest.com)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)](https://github.com/BeameryHQ/ddd-ts/graphs/commit-activity)
+[![CICD](https://github.com/BeameryHQ/ddd-ts/actions/workflows/cicd.yml/badge.svg)](https://github.com/BeameryHQ/ddd-ts/actions/workflows/cicd.yml)
+
+---
+
+This library includes a collection of building blocks to help build out your DDD apps.
 
 **Table Of Contents**
 <!-- TOC -->
@@ -25,9 +35,10 @@ A collection of small building blocks to help build multi-tenanted applications 
 
 ## Building Blocks
 
+> ℹ️ New to DDD? See the [credits](#credits) for some background context.
+
 This library exposes the following building blocks:
 
-> ℹ️ New to DDD? See the [credits](#credits) for some background context.
 
 ### Value Object
 
@@ -200,7 +211,7 @@ agg.foo = 'baz';
 DomainEventsBroker.dispatchAggregateEvents(agg);
 ```
 
-**When to dispatch events?** Whenever makes sense for your application. Generally, a good starting point is to follow the [unit-of-work](https://martinfowler.com/eaaCatalog/unitOfWork.html) pattern, dispatching relevant Aggregate events once persistance of that Aggregate has been successfully completed.
+**When to dispatch events?** Whenever makes sense for your application. Generally, a good starting point is to follow the [unit-of-work][fowler-unit-of-work] pattern, dispatching relevant Aggregate events once persistance of that Aggregate has been successfully completed.
 
 
 ## Examples
@@ -329,14 +340,24 @@ See [Contributing](./CONTRIBUTING.md).
 
 ## Credits
 
-[Eric Evans' original 2003 book](https://www.amazon.co.uk/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215), _the_ original reference on DDD.
-
-[Khalil Stemmler's Blog series on DDD](https://khalilstemmler.com/articles/categories/domain-driven-design/).
-
-[Microsoft's .NET docs on DDD](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice).
-
-The `DomainEventsBroker` implementation is based on [Khalil Stemmler's port](https://khalilstemmler.com/articles/typescript-domain-driven-design/chain-business-logic-domain-events/) of [Udi Dahan's 2009 blog post about Domain Events in C#](https://udidahan.com/2009/06/14/domain-events-salvation/).
+- [Eric Evans' original 2003 book][evans-ddd], _the_ original reference on DDD.
+- [Khalil Stemmler's Blog series on DDD][khalil-ddd-blog-series].
+- [Microsoft's .NET docs on DDD][ms-net-ddd].
+- The `DomainEventsBroker` implementation is based on [Khalil Stemmler's port][khalil-ddd-events-port] of [Udi Dahan's 2009 blog post about Domain Events in C#][dahan-csharp-ddd-event].
 
 ## License
 
 MIT
+
+
+[fowler-ddd]: https://martinfowler.com/bliki/DomainDrivenDesign.html
+[fowler-unit-of-work]: https://martinfowler.com/eaaCatalog/unitOfWork.html
+[evans-ddd]: https://www.amazon.co.uk/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215
+[khalil-ddd-blog-series]: https://khalilstemmler.com/articles/categories/domain-driven-design/
+[khalil-ddd-events-port]: https://khalilstemmler.com/articles/typescript-domain-driven-design/chain-business-logic-domain-events/
+[ms-net-ddd]: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice
+[dahan-csharp-ddd-event]: https://udidahan.com/2009/06/14/domain-events-salvation/
+
+
+
+
