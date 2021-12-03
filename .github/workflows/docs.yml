@@ -12,7 +12,7 @@ jobs:
 
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
-        # check-modified-files-only: yes
-        base-branch: main
+        check-modified-files-only: yes
+        use-quiet-mode: yes
         config-file: '.md-link-check.config.json'
-        use-verbose-mode: yes
+        base-branch: main
