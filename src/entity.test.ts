@@ -4,7 +4,7 @@ import { Entity } from './entity';
 describe('Entity', () => {
   it("sets it's own id for new objects", () => {
     class TestEntity extends Entity {}
-    const obj = new TestEntity();
+    const obj = new TestEntity({});
 
     expect(obj.id).toBeString();
     expect(obj.id.length).toBeGreaterThan(0);
@@ -35,7 +35,7 @@ describe('Entity', () => {
   it('correctly compares two identical entities', () => {
     class TestEntity extends Entity {}
 
-    const obj1 = new TestEntity();
+    const obj1 = new TestEntity({});
 
     expect(obj1.equals(obj1)).toBeTrue();
   });
@@ -45,7 +45,7 @@ describe('Entity', () => {
 
     const preexistingId = uuid();
     const obj1 = new TestEntity({ id: preexistingId });
-    const obj2 = new TestEntity();
+    const obj2 = new TestEntity({});
 
     expect(obj1.equals(obj2)).toBeFalse();
   });
