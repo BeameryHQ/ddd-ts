@@ -10,9 +10,10 @@ export interface IDomainEvent<T = null> {
 }
 
 // Prototype for functions that will consume Domain Events
-export type DomainEventHandler<T = null> = (
-  event: IDomainEvent<T>,
-) => void | Promise<void>;
+export type DomainEventHandler<
+  T = null,
+  E extends IDomainEvent<T> = IDomainEvent<T>,
+> = (event: E) => void | Promise<void>;
 
 export type IEventConstructorContext = Omit<IDomainEvent, 'timestamp' | 'data'>;
 
