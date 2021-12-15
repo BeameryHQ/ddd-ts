@@ -1,7 +1,6 @@
 import { DomainEventsBroker } from './domain-events-broker';
 import { IDomainEvent } from './domain-event';
 import { IEntity, Entity } from './entity';
-import { ILogger } from './ilogger';
 
 export interface IAggregateRoot extends IEntity {
   readonly domainEvents: IDomainEvent<unknown>[];
@@ -27,26 +26,6 @@ export abstract class AggregateRoot<T>
   implements IAggregateRoot
 {
   private _domainEvents: IDomainEvent<unknown>[] = [];
-  private logger: ILogger | null;
-
-  constructor(data: T, logger?: ILogger) {
-    super(data);
-
-    this.logger = logger ?? null;
-  }
-
-  private logDomainEventAdded(event: IDomainEvent<unknown>): void {
-    const _this = Reflect.getPrototypeOf(this);
-    const domainEvent = Reflect.getPrototypeOf(event);
-
-    if (!_this || !domainEvent) {
-      this.logger?.warn('Could not get isntance of events to log');
-    } else {
-      this.logger?.info(
-        `[Domain Event Added]: ${_this.constructor.name} => ${domainEvent.constructor.name}`,
-      );
-    }
-  }
 
   protected addDomainEvent(event: IDomainEvent<unknown>): void {
     this._domainEvents.push(event);
@@ -54,8 +33,6 @@ export abstract class AggregateRoot<T>
     // register this aggregate to indicate that its events
     // should be dispatched at some point
     DomainEventsBroker.registerAggregate(this);
-
-    this.logDomainEventAdded(event);
   }
 
   public clearDomainEvents(): void {
