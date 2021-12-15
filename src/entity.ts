@@ -6,7 +6,8 @@ const isEntity = (v: unknown): v is Entity<any> => v instanceof Entity;
 export interface IEntity {
   readonly id: string;
   // support multi-tenant applications
-  readonly tenantId: string | null;
+  // Note: empty string if tenant isn't required
+  readonly tenantId: string;
 
   equals(object?: IEntity): boolean;
 }
@@ -25,8 +26,8 @@ export abstract class Entity<
   T extends Partial<defaultConstructorData> = Partial<defaultConstructorData>,
 > implements IEntity
 {
-  private readonly _id: string;
-  private readonly _tenantId: string;
+  private readonly _id: IEntity['id'];
+  private readonly _tenantId: IEntity['tenantId'];
 
   protected readonly _data: Omit<T, 'id' | 'tenantId'>;
 
