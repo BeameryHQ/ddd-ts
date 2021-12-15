@@ -12,27 +12,26 @@ export interface IEntity {
   equals(object?: IEntity): boolean;
 }
 
-interface defaultConstructorData {
-  tenantId: string;
-  id: string;
-}
+type IBaseEntityData = Partial<{
+  tenantId: IEntity['tenantId'];
+  id: IEntity['id'];
+}>;
 
 /**
  * An object whose definition is based on `identity` over just its attributes.
  *
  * Also known as `Reference Objects`.
  */
-export abstract class Entity<
-  T extends Partial<defaultConstructorData> = Partial<defaultConstructorData>,
-> implements IEntity
+export abstract class Entity<T extends IBaseEntityData = IBaseEntityData>
+  implements IEntity
 {
   private readonly _id: IEntity['id'];
   private readonly _tenantId: IEntity['tenantId'];
 
   protected readonly _data: Omit<T, 'id' | 'tenantId'>;
 
-  // Make `id` optional accounting for re-consituting objects from persistence
-  constructor(data?: T) {
+  // Make `id` optional: allow for re-consituting objects from persistence
+  constructor(data: T) {
     this._tenantId = data?.tenantId ?? '';
     this._id = data?.id ?? uuid();
 
@@ -40,8 +39,6 @@ export abstract class Entity<
     delete data?.id;
     delete data?.tenantId;
 
-    // @ts-expect-error
-    // fixme: check typing
     this._data = data ?? {};
   }
 
