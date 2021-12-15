@@ -58,3 +58,25 @@ export abstract class Entity<T extends IBaseEntityData = IBaseEntityData>
     return Object.is(this, object) || this._id === object.id;
   }
 }
+
+//
+// Utility Types
+//
+
+/**
+ * Create the type for the custom (data) attributes of an Entity.
+ *
+ * Note: The attribute getters/setters will still have to be defined manually within your Entity object.
+ */
+export type BuildEntityDataType<T> = T & IBaseEntityData;
+
+/**
+ * Create the public interface of the resulting Entity.
+ * This allows you to depend on an abstraction over a concretion.
+ */
+export type BuildEntityInterface<T> = IEntity &
+  Exclude<
+    // The nested `Exclude` "cleans" up the type if a consumer passes the result of the `BuildEntityDataType` helper
+    BuildEntityDataType<Exclude<T, 'IBaseEntityData'>>,
+    'IBaseEntityData'
+  >;
