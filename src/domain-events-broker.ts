@@ -2,6 +2,9 @@
 import { IAggregateRoot } from './aggregate-root';
 import { DomainEventHandler } from './domain-event';
 
+/**
+ * In-process message bus.
+ */
 export class DomainEventsBroker {
   private static eventHandlers = new Map<string, DomainEventHandler<any>[]>();
 

@@ -15,11 +15,15 @@ export type DomainEventHandler<
   E extends IDomainEvent<T> = IDomainEvent<T>,
 > = (event: E) => void | Promise<void>;
 
-export type IEventConstructorContext = Omit<IDomainEvent, 'timestamp' | 'data'>;
+export type IEventConstructorContext = Pick<
+  IDomainEvent,
+  'aggregateId' | 'tenantId'
+>;
 
 /**
  * Base Domain Event class.
- * All Domain Events should extend this class.
+ *
+ * All Domain Events MUST extend this class.
  */
 export abstract class AbstractDomainEvent<T = null> implements IDomainEvent<T> {
   public readonly data: IDomainEvent<T>['data'];
