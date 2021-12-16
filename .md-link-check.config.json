@@ -1,4 +1,5 @@
 {
+  "ignorePatterns": [{ "pattern": "^http" }],
   "replacementPatterns": [
     {
       "pattern": "^/",
