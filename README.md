@@ -2,7 +2,7 @@
 
 Build (multi-tenanted) apps with [Domain Driven Design (DDD)][fowler-ddd] and Typescript with ease.
 
-> ⚠️ Although this package is being used in production inside Beamery, the API should still be considered a WIP / Alpha level and likely to include breaking changes. We will signal once the API has stabilised with a v1.0.0 release.
+> ⚠️ Although at Beamery we use this package in production, this package should be considered an Alpha level release and thus subject to breaking changes as we stabilise the API. A v1.0.0 release will signal a stabilsed API.
 
 ---
 
@@ -17,6 +17,7 @@ This library includes a collection of building blocks to help build out your DDD
 **Table Of Contents**
 <!-- TOC -->
 
+- [Installation](#installation)
 - [Building Blocks](#building-blocks)
   - [Value Object](#value-object)
   - [Entity](#entity)
@@ -34,6 +35,14 @@ This library includes a collection of building blocks to help build out your DDD
 - [License](#license)
 
 <!-- /TOC -->
+
+## Installation
+
+```sh
+npm install ddd-ts
+# or
+yarn add ddd-ts
+```
 
 ## Building Blocks
 
@@ -62,23 +71,48 @@ export class MyCustomValueObject extends ValueObject<DataStructure> {}
 
 Create an object whose identity extends beyond its attributes. Entity objects adhere to the [`IEntity`](./src/entity.ts) interface.
 
-As an Entity's identity is based on more than its attributes, this means that an Entity's data structure has to be an Object, as it will automatically include an ID parameter. This also allows you to provide an Id value when re-constituting an Entity from some persistance layer, such as a database.
+An Entity's identity is based on more than its attributes (c.f. [Value Objects](#value-object)) which means that an Entity's data structure has to be an Object, as it will automatically include an ID parameter. The ID is automatically generated or you can provide an id value, e.g. when re-constituting an Entity from some persistance layer, such as a database.
 
-> Reconstituted and new Entity objects form different parts of an Entity's _lifecycle_ and so we ensure there is support for this clear distinction.
+> New Entity and re-constituted objects form different parts of an Entity's _lifecycle_ and so we ensure there is support for this clear distinction.
 
 ```ts
 // entity-example.ts
-import { Entity } from 'ddd-ts';
+import { Entity, BuildEntityDataType, BuildEntityInterface } from 'ddd-ts';
 
-// the `id` property is automatically added by the base class, so we don't need to define it again
-interface DataStructure {
+// Use the type utilities to automatically add base features offerd by Entity objects.
+// The data type utility automatically configures your constructor to support the different lifecycles mentioned above.
+//
+// By default, the user-defined attribute(s) will be considerd as (pseudo) "protected" attribute(s) and won't be
+// accessible outside the class. You will have to manually specify getters (and/or setters) for attributes
+// that should be publicly accessible.
+type DataStructure = BuildEntityDataType<{
   foo: string;
-}
+  bar: string;
+}>
 
-// Define an Entity which encapsulates some data
+//
+// Use one of the 3 following approaches to define your custom Entity:
+//
+
+// 1. Define an Entity which encapsulates some private data
 export class MyCustomEntity extends Entity<DataStructure> {}
 
+// 2. Use the type utility to define an Entity which encapsulates and exposes all custom data attributes
+interface IMyCustomEntity extends BuildEntityInterface<DataStructure> {}
+
+export class MyCustomEntity extends Entity<DataStructure> implements IMyCustomEntity {}
+
+// 3. Use the base Enitty interface to customise which attributes are private and which are public
+interface IMyCustomEntity extends IEntity {
+  foo: string
+}
+
+// Note: here the attribute `bar` will not be accessible outside of your custom Entity class
+export class MyCustomEntity extends Entity<DataStructure> implements IMyCustomEntity {}
+
+//
 // ---
+// Using either approach (1) or (2) for the example:
 
 // Create a new instance of this Domain object
 const foo = new MyCustomEntity({ foo: 'bar' });
@@ -89,7 +123,7 @@ const foo = new MyCustomEntity({ id: '123', foo: 'bar' });
 
 ### Aggregate Root
 
-Aggregate Roots are [Entities](#entity) -- with the same features outline above -- with additional responsibilities: controlling access, visibility, and state of encapsulated objects (e.g. [Entity](#entity) and [ValueObject](#value-object)s).
+Aggregate Roots are [Entities](#entity) -- with the same features outlined above -- with additional responsibilities: controlling access, visibility, and state of encapsulated objects (e.g. [Entity](#entity) and [ValueObject](#value-object)s).
 
 Aggregate Roots adhere to the [IAggregateRoot](./src/aggregate-root.ts) interface.
 
@@ -174,7 +208,7 @@ A simple in-process event broker for firing [Domain Events](#domain-event) for a
 
 > ℹ️  When required, this can be replaced with a more advanced setup using something like RabbitMQ, Kafka, etc.
 
-> ⚠️  We do not yet support external event queues. Support will be added in a future release.
+> ⚠️  This packages does not yet support external event queues; Support will be added in a future release.
 
 The `DomainEventsBroker` manages all `AggregateRoot`s which have notified it that they have `DomainEvent`(s) to be triggered.
 
@@ -206,14 +240,14 @@ import { MyCustomAggregate } from './aggregate-example.ts'
 
 const agg = new MyCustomAggregate({ foo: 'bar' });
 
-// This will register the Domain Event
+// Using our code from above, this will register the Domain Event
 agg.foo = 'baz';
 
-// When we are ready to dispatch all Domain Events, we simply call:
+// When we are ready to dispatch all Domain Events for our Aggregate, simply call:
 DomainEventsBroker.dispatchAggregateEvents(agg);
 ```
 
-**When to dispatch events?** Whenever makes sense for your application. Generally, a good starting point is to follow the [unit-of-work][fowler-unit-of-work] pattern, dispatching relevant Aggregate events once persistance of that Aggregate has been successfully completed.
+**When to dispatch events?** Whenever makes sense for your application. Generally, a good starting point is to follow the [unit-of-work][fowler-unit-of-work] pattern, dispatching relevant Aggregate events once persistance of that Aggregate has been successfully completed. At this point, the Aggregate will have enforced all _rule invariants_ which represent your domain and the new state will have been persisted.
 
 
 ## Examples
@@ -222,7 +256,7 @@ Some slightly extended examples, where relevant, to expand on the examples outli
 
 #### Value Object
 
-Value objects can be used to house invariant rules for you custom data object. For example, a value object which enforces timestamps to be created as strings with the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601).
+Value objects can (and _should_) be used to house invariant rules for you custom data object. For example, a value object which enforces timestamps to be created as strings with the [ISO 8601 standard](https://en.wikipedia.org/wiki/ISO_8601).
 
 ```ts
 // ./timestamp.ts
@@ -267,15 +301,20 @@ if(t1.equals(t2)) {
 
 ```ts
 // ./person.ts
-import { Entity } from 'ddd-ts';
+import { Entity, IEntity } from 'ddd-ts';
 
-interface PersonData {
+//
+// The following approach results in making _all_ custom data attributes
+// publicly available outside the custom Entity class.
+//
+
+interface IPerson extends IEntity {
   name: string;
   address: string;
   phone: number;
 }
 
-export class Person extends Entity<PersonData> {
+export class Person extends Entity<PersonData> implements IPerson {
   public get name(){
     return this._data.name;
   }
@@ -320,7 +359,7 @@ jane._data.name // fail! Typescript error
 
 #### Aggregate Root
 
-See [Entity Examples]()
+See [Entity Examples](#entity-1)
 
 <!-- Todo Add more example with events? -->
 
@@ -343,8 +382,8 @@ See [Contributing](./CONTRIBUTING.md).
 ## Credits
 
 - [Eric Evans' original 2003 book][evans-ddd], _the_ original reference on DDD.
-- [Khalil Stemmler's Blog series on DDD][khalil-ddd-blog-series].
 - [Microsoft's .NET docs on DDD][ms-net-ddd].
+- [Khalil Stemmler's Blog series on DDD][khalil-ddd-blog-series].
 - The `DomainEventsBroker` implementation is based on [Khalil Stemmler's port][khalil-ddd-events-port] of [Udi Dahan's 2009 blog post about Domain Events in C#][dahan-csharp-ddd-event].
 
 ## License
