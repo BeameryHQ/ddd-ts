@@ -42,7 +42,7 @@ export class DomainEventsBroker {
    */
   public static registerEventHandler(
     eventName: string,
-    handler: DomainEventHandler<any>,
+    handler: DomainEventHandler,
   ): void {
     this.eventHandlers.set(
       eventName,
