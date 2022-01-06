@@ -4,10 +4,11 @@
   "version": "0.3.0",
   "main": "dist/index.js",
   "module": "dist/index.d.ts",
+  "sideEffects": false,
   "author": "Beamery Engineering",
   "license": "MIT",
   "scripts": {
-    "build": "rollup --config rollup.config.js",
+    "build": "rimraf dist && tsc && rimraf dist/*.test.*",
     "test": "jest",
     "check-types": "tsc --noEmit",
     "lint": "eslint --config .eslintrc.js --ignore-path .gitignore",
@@ -34,9 +35,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.1",
-    "@rollup/plugin-node-resolve": "^13.0.6",
-    "@rollup/plugin-typescript": "^8.3.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",
     "@types/uuid": "^8.3.1",
@@ -53,7 +51,7 @@
     "jest-extended": "^1.1.0",
     "np": "^7.6.0",
     "prettier": "^2.5.0",
-    "rollup": "^2.60.2",
+    "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
     "tslib": "^2.3.1",
