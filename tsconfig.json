@@ -1,7 +1,13 @@
 {
-  "include": ["src"],
-  "exclude": ["dist"],
-  "files": ["global.d.ts"],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "dist"
+  ],
+  "files": [
+    "global.d.ts"
+  ],
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
@@ -17,13 +23,16 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "allowJs": false,
-    "types": ["jest", "node"],
+    "types": [
+      "jest",
+      "node"
+    ],
     "removeComments": true,
     "importHelpers": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noEmit": true
+    "noEmit": false
   }
 }
