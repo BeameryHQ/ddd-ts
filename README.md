@@ -1,8 +1,8 @@
 # DDD-TS
 
-Build (multi-tenanted) apps with [Domain Driven Design (DDD)][fowler-ddd] and Typescript with ease.
+Build (multi-tenanted) apps with [Domain Driven Design (DDD)][fowler-ddd], Typescript and NodeJS with ease.
 
-> ⚠️ Although at Beamery we use this package in production, this package should be considered an Alpha level release and thus subject to breaking changes as we stabilise the API. A v1.0.0 release will signal a stabilsed API.
+> ⚠️ This package should be considered an Alpha level release and thus subject to breaking changes as we stabilise the API. A v1.0.0 release will signal a stabilsed API.
 
 ---
 
