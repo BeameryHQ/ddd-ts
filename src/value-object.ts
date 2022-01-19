@@ -1,4 +1,5 @@
 import { shallowEqual } from 'fast-equals';
+import { deepFreeze } from './utils';
 
 export interface IValueObject<T = unknown> {
   get value(): T;
@@ -19,7 +20,7 @@ export abstract class ValueObject<T> implements IValueObject<T> {
   protected readonly _data: T;
 
   constructor(props: T) {
-    this._data = Object.freeze(props);
+    this._data = deepFreeze(props) as T;
   }
 
   public equals(vo?: ValueObject<T>): boolean {
