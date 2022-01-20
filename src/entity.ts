@@ -1,7 +1,9 @@
 import { v4 as uuid } from 'uuid';
 
 // eslint-disable-next-line no-use-before-define
-const isEntity = (v: unknown): v is Entity<any> => v instanceof Entity;
+const isEntity = <T extends IBaseEntityData = IBaseEntityData>(
+  v: unknown,
+): v is Entity<T> => v instanceof Entity;
 
 export interface IEntity {
   readonly id: string;
