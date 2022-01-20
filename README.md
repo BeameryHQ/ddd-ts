@@ -69,21 +69,31 @@ export class MyCustomValueObject extends ValueObject<DataStructure> {}
 
 ### Entity
 
-Create an object whose identity extends beyond its attributes. Entity objects adhere to the [`IEntity`](./src/entity.ts) interface.
+Create an object whose identity extends beyond its attributes. Entity objects adhere to the [IEntity](./src/entity.ts) interface.
 
-An Entity's identity is based on more than its attributes (c.f. [Value Objects](#value-object)) which means that an Entity's data structure has to be an Object, as it will automatically include an ID parameter. The ID is automatically generated or you can provide an id value, e.g. when re-constituting an Entity from some persistance layer, such as a database.
+An Entity's identity is based on more than its attributes (c.f. [Value Objects](#value-object)) which means that an Entity's data structure must be an Object, as the data structure will automatically include a distinguishing ID parameter. The ID parameter is either automatically generated or you can provide a value manually. This allows Entities to support the full lifecycle of the Domain object: _creation_ and _re-constitution_. The Re-constitution lifecycle happens when creating an instance of your Entity from the data stored in a persistence layer, such as a database.
 
-> New Entity and re-constituted objects form different parts of an Entity's _lifecycle_ and so we ensure there is support for this clear distinction.
+This library also exports some helper types to simplify the above Entity requirements.
+
+The first type helper, `BuildEntityDataType`, provides support for the ID parameter, and its implication on lifecycle, and saves from having to repeat this across the codebase. This helper produces the type signature for all data/attributes that can be accessed _internally_ within the Entity object. By default, this does not produce a type which makes these attributes accessible from outside the Entity domain object.
+
+The second type helper, `BuildEntityInterface`, helps with the latter point: Creating the public interface of attributes that your Entity domain object will expose. Specifically, this helper offers a quick path to define _all_ attributes as being publicly accessible. If only some should be public, then you can manually build out the interface using the base [IEntity](./src/entity.ts) interface, which will handle the lifecycle API for you but give you the ability to define which attributes from your data structure should be set as public.
 
 ```ts
 // entity-example.ts
-import { Entity, BuildEntityDataType, BuildEntityInterface } from 'ddd-ts';
+import { Entity } from 'ddd-ts';
+// separate out the type imports for clarity
+import type {
+  BuildEntityInterface,
+  BuildEntityDataType,
+  IEntity
+} from 'ddd-ts';
 
-// Use the type utilities to automatically add base features offerd by Entity objects.
-// The data type utility automatically configures your constructor to support the different lifecycles mentioned above.
+// The type utilities automatically add base features offerd by Entity objects.
+// The BuildEntityDataType helper automatically configures the constructor to support the different lifecycles mentioned above.
 //
-// By default, the user-defined attribute(s) will be considerd as (pseudo) "protected" attribute(s) and won't be
-// accessible outside the class. You will have to manually specify getters (and/or setters) for attributes
+// By default, user-defined attribute(s) will be considerd as "protected" attribute(s) and won't be
+// accessible outside the class object. You will have to manually specify getters (and/or setters) for attributes
 // that should be publicly accessible.
 type DataStructure = BuildEntityDataType<{
   foo: string;
@@ -98,45 +108,61 @@ type DataStructure = BuildEntityDataType<{
 export class MyCustomEntity extends Entity<DataStructure> {}
 
 // 2. Use the type utility to define an Entity which encapsulates and exposes all custom data attributes
-interface IMyCustomEntity extends BuildEntityInterface<DataStructure> {}
+export class MyCustomEntity extends Entity<DataStructure> implements BuildEntityInterface<DataStructure> {}
 
-export class MyCustomEntity extends Entity<DataStructure> implements IMyCustomEntity {}
-
-// 3. Use the base Enitty interface to customise which attributes are private and which are public
+// 3. Use the base Entity interface to customise which attributes are private and which are public
 interface IMyCustomEntity extends IEntity {
+  // here, we only make "foo" public while "bar" remains private
   foo: string
 }
 
 // Note: here the attribute `bar` will not be accessible outside of your custom Entity class
 export class MyCustomEntity extends Entity<DataStructure> implements IMyCustomEntity {}
 
-//
 // ---
-// Using either approach (1) or (2) for the example:
+// Let's use the approach which make all data publicly available -- i.e. approach (2) above
+// ---
 
+// Approach (2) only sets the type signature it doesn't automatically make those data attributes accessible.
+// For that we will have to build on our example above and add some "getters":
+export class MyCustomEntity extends Entity<DataStructure> implements BuildEntityInterface<DataStructure> {
+  public get foo() { return this._data.foo; }
+
+  public get bar() { return this._data.bar; }
+}
+
+// Now we have everything we need, we can create a new instance of our custom Entity domain object:
 // Create a new instance of this Domain object
-const foo = new MyCustomEntity({ foo: 'bar' });
+const entity = new MyCustomEntity({ foo: 'hello', bar: 'world' });
 
-// Re-constitute an Entity Domain object by providing an id
-const foo = new MyCustomEntity({ id: '123', foo: 'bar' });
+// And we can now access its data attributes
+entity.foo // hello
+entity.bar // world
+
+
+// Alternatively, we can re-constitute an Entity domain object by providing an id
+// This provides a continuity of identity of a domain object through different sessions or transactions
+const foo = new MyCustomEntity({ id: '123', foo: 'helo', bar: 'world' });
 ```
 
 ### Aggregate Root
 
-Aggregate Roots are [Entities](#entity) -- with the same features outlined above -- with additional responsibilities: controlling access, visibility, and state of encapsulated objects (e.g. [Entity](#entity) and [ValueObject](#value-object)s).
+Aggregate Roots are _special_ [Entities](#entity), sharing the same API outlined above, but also including additional responsibilities: controlling access, visibility, and state of encapsulated objects (e.g. [Entity](#entity) and [ValueObject](#value-object)s). With the exception of [Domain Events](#domain-event), all these additional responsibilities inform the design of such objects from your application's perspective without including any additional API. Therefore, Aggregate Roots can be largely handled in the exact same way as Entities, described above. The specific of [Domain Events](#domain-event) will be discussed later.
 
-Aggregate Roots adhere to the [IAggregateRoot](./src/aggregate-root.ts) interface.
+Aggregate Roots adhere to the [`IAggregateRoot<T>`](./src/aggregate-root.ts) interface. This interface is an extension of the `IEntity` interface with the added API for [Domain Events](#domain-event).
+
+The specifics of creating an Aggregate Root and which data should be treated as public or private, and how to hand the different lifecyles, are exactly the same as described above with the [Entity](#entity) object. The only initial difference is we use `AggregateRoot` instead of `Entity`. For brevity, the full example will not be repeated again here.
 
 ```ts
 // aggregate-example.ts
-import { AggregateRoot } from 'ddd-ts';
+import { AggregateRoot, BuildEntityDataType } from 'ddd-ts';
 
 // the `id` property is automatically added by the base class, so we don't need to define it again
-interface DataStructure {
+type DataStructure = BuildEntityDataType<{
   foo: string;
-}
+}>
 
-// Define an Aggregate Root which encapsulates some data
+// Define an Aggregate Root which encapsulates some (private) data
 export class MyCustomAggregate extends AggregateRoot<DataStructure> {}
 
 // ---
@@ -149,7 +175,7 @@ const foo = new MyCustomAggregate({ foo: 'bar' });
 const foo = new MyCustomAggregate({ id: '123', foo: 'bar' });
 ```
 
-Aggregate roots can also register [Domain Events](#domain-event) to notify other parts of your app that something happened.
+As mentioned above, one of the primary API differences between `AggregateRoot`s and `Entity`s is [Domain Events](#domain-event). `AggregateRoot`s expose an API to register a [Domain Event](#domain-event), which can be used to notify other parts of your app that something happened.
 
 ```ts
 // aggregate-example.ts
@@ -165,14 +191,15 @@ interface DataStructure {
 
 // Define an Aggregate Root which encapsulates some data
 export class MyCustomAggregate extends AggregateRoot<DataStructure> {
+  // Define a setter for an attribute which we want to assign our Domain event to when it is changed
   public set foo(newFoo: DataStructure['foo']) {
     this._data.foo = newFoo;
 
     // The second parameter here is the event Data which is attached to the event.
-    const event = CustomAggregateFooUpdatedEvent({ aggregateId: this.id }, newFoo);
+    const event = new CustomAggregateFooUpdatedEvent({ aggregateId: this.id }, newFoo);
 
     // Add this custom event to the AggregateRoot; and also automatically notify the
-    // Broker (see later sections) that this Aggregate has an event to be dispatched.
+    // Broker (see later) that this Aggregate has an event to be dispatched.
     //
     // At this point nothing else will happen. We will have to manually instruct the Broker to dispatch
     // this Aggregates events. This is discussed later
@@ -181,11 +208,32 @@ export class MyCustomAggregate extends AggregateRoot<DataStructure> {
 }
 ```
 
+For any given `AggregateRoot` we can get a list of all Domain Events queued for dispatch and/or clear its queue:
+
+```ts
+// Use our previous example set up to create an Aggregate
+const agg = new MyCustomAggregate({ foo: 'hello world' });
+
+// If we were to check which events we have queued, we wouldn't expect to have any based on
+// the previous example as we haven't performed the only action which would queue a domain event: edit ".foo".
+let events = agg.domainEvents // [] -- length of 0
+
+// Let's edit ".foo" to queue a domain event
+agg.foo = 'goodbye world';
+
+events = agg.domainEvents // [CustomAggregateFooUpdatedEvent] -- length of 1, with our custom domain event
+
+// Let's clear the event queue
+agg.clearDomainEvents();
+events = agg.domainEvents // [] -- length of 0
+```
+
+
 ### Domain Event
 
 Domain Events enable decoupling parts (e.g. "_sub domains_") of your application.
 
-Domain Events adhere to the [IDomainEvent](./src/domain-event.ts) interface. All Domain Events MUST extend the base Abstract Domain Event class:
+Domain Events adhere to the [`IDomainEvent<T>`](./src/domain-event.ts) interface. All Domain Events MUST extend the base `AbstractDomainEvent` class:
 
 > We'll continue the example from the [AggregateRoot](#aggregate-root) above.
 
@@ -208,9 +256,9 @@ A simple in-process event broker for firing [Domain Events](#domain-event) for a
 
 > ℹ️  When required, this can be replaced with a more advanced setup using something like RabbitMQ, Kafka, etc.
 
-> ⚠️  This packages does not yet support external event queues; Support will be added in a future release.
+> ⚠️  This library does not yet support external event queues; Support will be added in a future release.
 
-The `DomainEventsBroker` manages all `AggregateRoot`s which have notified it that they have `DomainEvent`(s) to be triggered.
+The `DomainEventsBroker` manages all `AggregateRoot`s which have notified it that they have `DomainEvent`(s) to be dispatched.
 
 As outlined above, registering `AggregateRoot`s with the `DomainEventsBroker` happens automatically via the relevant `AggregateRoot`. Manual interaction with the `DomainEventsBroker` is only required when:
 
@@ -236,12 +284,8 @@ DomainEventsBroker.registerEventHandler(
 And then, we can dispatch _all_ events for an Aggregate Root when ready by:
 
 ```ts
-import { MyCustomAggregate } from './aggregate-example.ts'
-
-const agg = new MyCustomAggregate({ foo: 'bar' });
-
-// Using our code from above, this will register the Domain Event
-agg.foo = 'baz';
+// We'll use our `agg` variable which holds an instance of our custom Aggregate
+// defined above in a previous example.
 
 // When we are ready to dispatch all Domain Events for our Aggregate, simply call:
 DomainEventsBroker.dispatchAggregateEvents(agg);
@@ -340,7 +384,7 @@ const jane = new Person({
 
 // Re-constitute a person from some persistance layer
 const john = new Person({
-  id: 1,              // <- This enforces continuity over the Entity's lifecycle, as it moves back and forth between in-memory and the persistance layer
+  id: '1234',              // <- This enforces continuity over the Entity's lifecycle, as it moves back and forth between the in-memory and persistance layers
   name: 'John Smith',
   address: '22 Baker Street',
   phone: 01234567890
