@@ -33,7 +33,7 @@
   "dependencies": {
     "fast-equals": "^2.0.3",
     "tslib": "^2.4.0",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
