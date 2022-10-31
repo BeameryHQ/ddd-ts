@@ -9,6 +9,8 @@ Build (multi-tenanted) apps with [Domain Driven Design (DDD)][fowler-ddd], Types
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square&logo=Github)](http://makeapullrequest.com)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)](https://github.com/BeameryHQ/ddd-ts/graphs/commit-activity)
 [![CICD](https://github.com/BeameryHQ/ddd-ts/actions/workflows/cicd.yml/badge.svg)](https://github.com/BeameryHQ/ddd-ts/actions/workflows/cicd.yml)
+[![NPM Version](https://img.shields.io/npm/v/ddd-ts.svg)](https://www.npmjs.com/package/ddd-ts)
+[![NPM Total Downlodas](https://img.shields.io/npm/dt/ddd-ts.svg)](https://www.npmjs.com/package/ddd-ts)
 
 ---
 
