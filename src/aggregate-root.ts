@@ -21,7 +21,12 @@ export interface IAggregateRoot extends IEntity {
  * - External objects can not hold reference to objects within the Aggregate boundary; they can only access them transiently via the Aggregate Root
  * - Delete operations should remove _everything_ within the `Aggregate` boundary;
  */
-export abstract class AggregateRoot<T>
+export abstract class AggregateRoot<
+    T extends Partial<{ tenantId: string; id: string }> = {
+      tenantId: string;
+      id: string;
+    },
+  >
   extends Entity<T>
   implements IAggregateRoot
 {

@@ -26,14 +26,17 @@ describe('Aggregate DomainEvents', () => {
     const { AggregateRoot } = await import('./aggregate-root');
     const { DomainEventsBroker } = await import('./domain-events-broker');
 
-    class RegisterSingleEventTestAggregate extends AggregateRoot<void> {
+    class RegisterSingleEventTestAggregate extends AggregateRoot {
       public addEvent(event: IDomainEvent): void {
         this.addDomainEvent(event);
       }
     }
 
     const myEvent = new PrimaryStubEvent(stubEventContext);
-    const myAggregrate = new RegisterSingleEventTestAggregate();
+    const myAggregrate = new RegisterSingleEventTestAggregate({
+      id: '1',
+      tenantId: '1',
+    });
 
     myAggregrate.addEvent(myEvent);
 
@@ -47,7 +50,7 @@ describe('Aggregate DomainEvents', () => {
     const { AggregateRoot } = await import('./aggregate-root');
     const { DomainEventsBroker } = await import('./domain-events-broker');
 
-    class RegisterMultpleEventTestAggregateA extends AggregateRoot<void> {
+    class RegisterMultpleEventTestAggregateA extends AggregateRoot {
       public addEvent(event: IDomainEvent): void {
         this.addDomainEvent(event);
       }
@@ -56,8 +59,14 @@ describe('Aggregate DomainEvents', () => {
 
     const myEventA = new PrimaryStubEvent(stubEventContext);
     const myEventB = new PrimaryStubEvent(stubEventContext);
-    const aggregateA = new RegisterMultpleEventTestAggregateA();
-    const aggregateB = new RegisterMultpleEventTestAggregateB();
+    const aggregateA = new RegisterMultpleEventTestAggregateA({
+      id: '1',
+      tenantId: '1',
+    });
+    const aggregateB = new RegisterMultpleEventTestAggregateB({
+      id: '2',
+      tenantId: '2',
+    });
 
     aggregateA.addEvent(myEventA);
     aggregateB.addEvent(myEventB);
@@ -71,7 +80,7 @@ describe('Aggregate DomainEvents', () => {
     const { AggregateRoot } = await import('./aggregate-root');
     const { DomainEventsBroker } = await import('./domain-events-broker');
 
-    class RegisterSingleEventTestAggregate extends AggregateRoot<void> {
+    class RegisterSingleEventTestAggregate extends AggregateRoot {
       public addEvent(event: IDomainEvent): void {
         this.addDomainEvent(event);
       }
@@ -79,7 +88,10 @@ describe('Aggregate DomainEvents', () => {
 
     const myEventA = new PrimaryStubEvent(stubEventContext);
     const myEventB = new SecondaryStubEvent(stubEventContext);
-    const myAggregrate = new RegisterSingleEventTestAggregate();
+    const myAggregrate = new RegisterSingleEventTestAggregate({
+      id: '1',
+      tenantId: '1',
+    });
 
     myAggregrate.addEvent(myEventA);
     myAggregrate.addEvent(myEventB);
@@ -95,14 +107,17 @@ describe('Aggregate DomainEvents', () => {
     const { AggregateRoot } = await import('./aggregate-root');
     const { DomainEventsBroker } = await import('./domain-events-broker');
 
-    class DispatchEventsTestAggregate extends AggregateRoot<void> {
+    class DispatchEventsTestAggregate extends AggregateRoot {
       public addEvent(event: IDomainEvent): void {
         this.addDomainEvent(event);
       }
     }
 
     const myEvent = new PrimaryStubEvent(stubEventContext);
-    const myAggregrate = new DispatchEventsTestAggregate();
+    const myAggregrate = new DispatchEventsTestAggregate({
+      id: '1',
+      tenantId: '1',
+    });
     const eventHandler = jest.fn();
 
     DomainEventsBroker.registerEventHandler(
@@ -119,7 +134,7 @@ describe('Aggregate DomainEvents', () => {
     const { AggregateRoot } = await import('./aggregate-root');
     const { DomainEventsBroker } = await import('./domain-events-broker');
 
-    class DispatchEventsTestAggregateA extends AggregateRoot<void> {
+    class DispatchEventsTestAggregateA extends AggregateRoot {
       public addEvent(event: IDomainEvent): void {
         this.addDomainEvent(event);
       }
@@ -127,7 +142,10 @@ describe('Aggregate DomainEvents', () => {
 
     const myEventA = new PrimaryStubEvent(stubEventContext);
 
-    const myAggregrateA = new DispatchEventsTestAggregateA();
+    const myAggregrateA = new DispatchEventsTestAggregateA({
+      id: '1',
+      tenantId: '1',
+    });
 
     const eventHandlerA = jest.fn();
     const eventHandlerB = jest.fn();
@@ -153,7 +171,7 @@ describe('Aggregate DomainEvents', () => {
     const { AggregateRoot } = await import('./aggregate-root');
     const { DomainEventsBroker } = await import('./domain-events-broker');
 
-    class DispatchEventsTestAggregateA extends AggregateRoot<void> {
+    class DispatchEventsTestAggregateA extends AggregateRoot {
       public addEvent(event: IDomainEvent): void {
         this.addDomainEvent(event);
       }
@@ -163,8 +181,14 @@ describe('Aggregate DomainEvents', () => {
     const myEventA = new PrimaryStubEvent(stubEventContext);
     const myEventB = new SecondaryStubEvent(stubEventContext);
 
-    const myAggregrateA = new DispatchEventsTestAggregateA();
-    const myAggregrateB = new DispatchEventsTestAggregateB();
+    const myAggregrateA = new DispatchEventsTestAggregateA({
+      id: '1',
+      tenantId: '1',
+    });
+    const myAggregrateB = new DispatchEventsTestAggregateB({
+      id: '2',
+      tenantId: '2',
+    });
 
     const eventHandlerA = jest.fn();
     const eventHandlerB = jest.fn();

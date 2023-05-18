@@ -13,16 +13,19 @@ export class DomainEventsBroker {
   private static findRegisteredAggregateById(
     id: string,
   ): IAggregateRoot | null {
-    return this.aggregatesWithEvents.find((agg) => agg.id === id) ?? null;
+    return (
+      DomainEventsBroker.aggregatesWithEvents.find((agg) => agg.id === id) ??
+      null
+    );
   }
 
   private static unregisterAggregate(aggregate: IAggregateRoot): void {
-    const aggIdx = this.aggregatesWithEvents.findIndex((agg) =>
+    const aggIdx = DomainEventsBroker.aggregatesWithEvents.findIndex((agg) =>
       agg.equals(aggregate),
     );
 
     if (aggIdx !== -1) {
-      this.aggregatesWithEvents.splice(aggIdx, 1);
+      DomainEventsBroker.aggregatesWithEvents.splice(aggIdx, 1);
     }
   }
 
@@ -30,7 +33,7 @@ export class DomainEventsBroker {
     aggregate.domainEvents.forEach((event) => {
       const eventName = event.constructor.name;
 
-      this.eventHandlers.get(eventName)?.forEach((handle) => {
+      DomainEventsBroker.eventHandlers.get(eventName)?.forEach((handle) => {
         // eslint-disable-next-line no-void
         void handle(event);
       });
@@ -44,9 +47,9 @@ export class DomainEventsBroker {
     eventName: string,
     handler: DomainEventHandler,
   ): void {
-    this.eventHandlers.set(
+    DomainEventsBroker.eventHandlers.set(
       eventName,
-      (this.eventHandlers.get(eventName) || []).concat(handler),
+      (DomainEventsBroker.eventHandlers.get(eventName) || []).concat(handler),
     );
   }
 
@@ -58,28 +61,28 @@ export class DomainEventsBroker {
     const foundAggregate = this.findRegisteredAggregateById(aggregate.id);
 
     if (!foundAggregate) {
-      this.aggregatesWithEvents.push(aggregate);
+      DomainEventsBroker.aggregatesWithEvents.push(aggregate);
     }
   }
 
   public static dispatchAggregateEvents(aggregate: IAggregateRoot): void {
     // ensure the provided aggregate has been registered for dispatch
-    const found = this.findRegisteredAggregateById(aggregate.id);
+    const found = DomainEventsBroker.findRegisteredAggregateById(aggregate.id);
 
     if (found) {
-      this.dispatchEvents(found);
+      DomainEventsBroker.dispatchEvents(found);
 
       found.clearDomainEvents();
 
-      this.unregisterAggregate(found);
+      DomainEventsBroker.unregisterAggregate(found);
     }
   }
 
   public static clearEventHandlers(): void {
-    this.eventHandlers = new Map();
+    DomainEventsBroker.eventHandlers = new Map();
   }
 
   public static clearRegisteredAggregates(): void {
-    this.aggregatesWithEvents = [];
+    DomainEventsBroker.aggregatesWithEvents = [];
   }
 }
