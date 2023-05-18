@@ -38,6 +38,12 @@ module.exports = {
         '@typescript-eslint/no-shadow': 'error',
         // Enables TSDoc linting.
         'tsdoc/syntax': 'warn',
+        '@typescript-eslint/unbound-method': [
+          'error',
+          {
+            ignoreStatic: true,
+          },
+        ],
       },
     },
     {
