@@ -1,6 +1,6 @@
 import { DomainEventsBroker } from './domain-events-broker';
 import { IDomainEvent } from './domain-event';
-import { IEntity, Entity } from './entity';
+import { IEntity, Entity, IEntityCoreData } from './entity';
 
 export interface IAggregateRoot extends IEntity {
   readonly domainEvents: IDomainEvent<unknown>[];
@@ -21,12 +21,7 @@ export interface IAggregateRoot extends IEntity {
  * - External objects can not hold reference to objects within the Aggregate boundary; they can only access them transiently via the Aggregate Root
  * - Delete operations should remove _everything_ within the `Aggregate` boundary;
  */
-export abstract class AggregateRoot<
-    T extends Partial<{ tenantId: string; id: string }> = {
-      tenantId: string;
-      id: string;
-    },
-  >
+export abstract class AggregateRoot<T extends IEntityCoreData = IEntityCoreData>
   extends Entity<T>
   implements IAggregateRoot
 {
